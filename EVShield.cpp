@@ -490,90 +490,56 @@ bool EVShieldBank::motorSetEncoderSpeedTimeAndControl(
   return writeRegisters(reg, 8);
 }
 
-// returns 0 when a motor has completed a timed move
-uint8_t EVShieldBank::motorIsTimeDone(SH_Motor which_motors)
+// Returns true when a motor has completed a timed move
+bool EVShieldBank::motorIsTimeDone(SH_Motor which_motors)
 {
   uint8_t s1, s2;
   if (which_motors == SH_Motor_Both)
   {
     s1 = motorGetStatusByte(SH_Motor_1);
     s2 = motorGetStatusByte(SH_Motor_2);
-    
-    if ( (s1 & SH_STATUS_TIME) == 0 && (s2 & SH_STATUS_TIME) == 0 )
-    {
-      // if stall bit was on there was an error
-      /*if ( (s1 & SH_STATUS_STALL) != 0 || (s2 & SH_STATUS_STALL) != 0 )
-      {
-        return SH_STATUS_STALL;
-      } else {*/
-        return 0;
-      //}
-    }
+    return (s1 & SH_STATUS_TIME) == 0 && (s2 & SH_STATUS_TIME) == 0;
   } else {
     s1 = motorGetStatusByte(which_motors);
-    if ( (s1 & SH_STATUS_TIME) == 0 ) {
-      /*if ( (s1 & SH_STATUS_STALL) != 0 )
-      {
-        return SH_STATUS_STALL;
-      } else {*/
-        return 0;
-      //}
-    }
+    return (s1 & SH_STATUS_TIME) == 0;
   }
 
 }
 
-// waited until a timed command finishes
+// Wait until a timed command finishes
 uint8_t EVShieldBank::motorWaitUntilTimeDone(SH_Motor which_motors)
 {
-  uint8_t s;
+  bool s;
   delay(50);  // this delay is required for the status byte to be available for reading.
   s = motorIsTimeDone(which_motors);  // fixed.
-  while (( s & SH_STATUS_TIME ) != 0 ) {
+  while (!s) {
     delay (50);
     s = motorIsTimeDone(which_motors);  // fixed.
   }
 }
 
-// True when a command based on using the motor encoder completes
-uint8_t EVShieldBank::motorIsTachoDone(SH_Motor which_motors)
+// Returns true when a command based on using the motor encoder completes
+bool EVShieldBank::motorIsTachoDone(SH_Motor which_motors)
 {
   uint8_t s1, s2;
   if (which_motors == SH_Motor_Both)
   {
     s1 = motorGetStatusByte(SH_Motor_1);
     s2 = motorGetStatusByte(SH_Motor_2);
-    
-    if ( (s1 & SH_STATUS_TACHO) == 0 && (s2 & SH_STATUS_TACHO) == 0 )
-    {
-      // if stall bit was on there was an error
-      /*if ( (s1 & SH_STATUS_STALL) != 0 || (s2 & SH_STATUS_STALL) != 0 )
-      {
-        return SH_STATUS_STALL;
-      } else {*/
-        return 0;
-      //}
-    }
+    return (s1 & SH_STATUS_TACHO) == 0 && (s2 & SH_STATUS_TACHO) == 0;
   } else {
     s1 = motorGetStatusByte(which_motors);
-    if ( (s1 & SH_STATUS_TACHO) == 0 ) {
-      /*if ( (s1 & SH_STATUS_STALL) != 0 )
-      {
-        return SH_STATUS_STALL;
-      } else {*/
-        return 0;
-      //}
-    }
+    return (s1 & SH_STATUS_TACHO) == 0;
   }
 }
 
-// waited until a turn-by-degrees command ends
+// Wait until a turn-by-degrees command ends
 uint8_t EVShieldBank::motorWaitUntilTachoDone(SH_Motor which_motors)
 {
-  uint8_t s;
+  bool s;
   delay(50);  // this delay is required for the status byte to be available for reading.
   s = motorIsTachoDone(which_motors);
-  while (( s & SH_STATUS_TACHO ) != 0 ) {
+  while (!s) {
     delay (50);
     s = motorIsTachoDone(which_motors);
   }

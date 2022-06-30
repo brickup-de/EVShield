@@ -527,10 +527,10 @@ public:
   /**
   Validate if the motor has finished running for the set time duration
     @param which_motors    Provide which motor(s) to operate on
-    @return                0 when motor(s) has completed a timed move properly,
-    If the return value is non-zero, either motor has not finished yet or has encountered an error condition.
+    @return                true when motor(s) has completed a timed move properly,
+    If the return value is false, either motor has not finished yet or has encountered an error condition.
   */
-  uint8_t     motorIsTimeDone(SH_Motor which_motors);
+  bool     motorIsTimeDone(SH_Motor which_motors);
   
   /**
   Wait until the motor has finished running for its set respective time duration
@@ -543,10 +543,10 @@ public:
   /**
   Validate if the motor has reached its set target tachometer position
     @param which_motors    Provide which motor(s) to operate on
-    @return                0 when motor(s) has completed a encoder based move properly,
-    If the return value is non-zero, either motor has not finished yet or has encountered an error condition.
+    @return                true when motor(s) has completed a encoder based move properly,
+    If the return value is false, either motor has not finished yet or has encountered an error condition.
   */
-  uint8_t     motorIsTachoDone(SH_Motor which_motors);
+  bool     motorIsTachoDone(SH_Motor which_motors);
   
   /** 
   Wait until the motor has reached its set target tachometer position
